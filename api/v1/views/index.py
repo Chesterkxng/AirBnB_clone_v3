@@ -20,6 +20,7 @@ def get_status():
     """
     return jsonify(status='OK')
 
+
 @app_views.route("/stats")
 def get_stats():
     """ Get the number of objects by classes
