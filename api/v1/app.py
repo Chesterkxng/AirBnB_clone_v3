@@ -17,6 +17,13 @@ def teardown_flask(exception):
     """ calls storage.close() """
     storage.close()
 
+
+@app.errorhandler(404)
+def not_found_error(error):
+    """ 404 error handler """
+    return jsonify(error="Not found")
+
+
 if __name__ == "__main__":
     if getenv("HBNB_API_HOST"):
         host = getenv("HBNB_API_HOST")
