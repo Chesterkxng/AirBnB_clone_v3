@@ -70,6 +70,17 @@ test_db_storage.py'])
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
+
+    @unittest.skipIf(models.storage_t != 'db', "testing filestorage")
+    def setUp(self):
+        """Set up environment test"""
+        self.storage = models.storage
+
+    @unittest.skipIf(models.storage_t != 'db', "testing filestorage")
+    def tearDown(self):
+        """Clean up environment test"""
+        del self.storage
+
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_returns_dict(self):
         """Test that all returns a dictionaty"""
@@ -87,8 +98,28 @@ class TestFileStorage(unittest.TestCase):
     def test_save(self):
         """Test that save properly saves objects to file.json"""
 
+    @unittest.skipIf(models.storage_t != 'db', "filestorage tests")
     def test_get(self):
         """Test getting objects from database storage"""
+        self.storage.reload()
+        state = State(name="California")
+        state_id = state.id
+        self.storage.new(state)
+        self.storage.save()
 
+        self.assertIs(self.storage.get(State, state_id), state)
+        self.assertIs(self.storage.get(User, state_id), None)
+
+    @unittest.skipIf(models.storage_t != 'db', "filestorage tests")
     def test_count(self):
         """Test counting objects from database storage"""
+        self.storage.reload()
+        state = State(name="Texas")
+        amenity = Amenity(name="TV")
+        self.storage.new(state)
+        self.storage.new(amenity)
+        self.storage.save()
+
+        self.assertEqual(self.storage.count(State), 1)
+        self.assertEqual(self.storage.count(Amenity), 1)
+        self.assertEqual(self.storage.count(), 2)
